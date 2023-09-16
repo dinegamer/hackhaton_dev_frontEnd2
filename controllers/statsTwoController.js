@@ -11,9 +11,122 @@ module.exports.getStatsTwoController = async (req, res) => {
         const decoded = jwt.verify(token, jwtSecret)
         const monthNames = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         const monthlyOrder = decoded.site === 'bacodji' ?
-            await Order2.find({ TMonth: { $in: monthNames } }, { Amount: 1, TMonth: 1, _id: 0 }) : decoded.site === 'hypodrome' ?
-            await Order3.find({ TMonth: { $in: monthNames } }, { Amount: 1, TMonth: 1, _id: 0 }) :
-            await Order.find({ TMonth: { $in: monthNames } }, { Amount: 1, TMonth: 1, _id: 0 }) 
+        await Order2.aggregate([
+
+          {
+            /* Filter out users who have not yet subscribed */
+            $match: {
+              /* "joined" is an ISODate field */
+              'TMonth': { $in: monthNames }
+            }
+          },
+          { 
+              $project: { "TMonth": 1, "Amount": 1}
+      },
+          
+            /* group by year and month of the subscription event */
+            {
+              $group: {
+                  _id: "$TMonth",
+                  TMonth: { "$first": "$TMonth"},
+                  Amount: { "$sum": "$Amount"},
+                 
+               
+         },
+      },
+  //    { 
+  //     $project: { "TMonth": 1, "Amount": 1}
+  // },
+           
+          {
+            /* sort descending (latest subscriptions first) */
+            $sort: {
+              TMonth: 1
+            }
+          },
+          {
+            $limit: 100,
+          },
+          
+        ])
+            : decoded.site === 'hypodrome' ?
+            await Order3.aggregate([
+
+              {
+                /* Filter out users who have not yet subscribed */
+                $match: {
+                  /* "joined" is an ISODate field */
+                  'TMonth': { $in: monthNames }
+                }
+              },
+              { 
+                  $project: { "TMonth": 1, "Amount": 1}
+          },
+              
+                /* group by year and month of the subscription event */
+                {
+                  $group: {
+                      _id: "$TMonth",
+                      TMonth: { "$first": "$TMonth"},
+                      Amount: { "$sum": "$Amount"},
+                     
+                   
+             },
+          },
+      //    { 
+      //     $project: { "TMonth": 1, "Amount": 1}
+      // },
+               
+              {
+                /* sort descending (latest subscriptions first) */
+                $sort: {
+                  TMonth: 1
+                }
+              },
+              {
+                $limit: 100,
+              },
+              
+            ]) :
+             await Order.aggregate([
+
+                {
+                  /* Filter out users who have not yet subscribed */
+                  $match: {
+                    /* "joined" is an ISODate field */
+                    'TMonth': { $in: monthNames }
+                  }
+                },
+                { 
+                    $project: { "TMonth": 1, "Amount": 1}
+            },
+                
+                  /* group by year and month of the subscription event */
+                  {
+                    $group: {
+                        _id: "$TMonth",
+                        TMonth: { "$first": "$TMonth"},
+                        Amount: { "$sum": "$Amount"},
+                       
+                     
+               },
+            },
+        //    { 
+        //     $project: { "TMonth": 1, "Amount": 1}
+        // },
+                 
+                {
+                  /* sort descending (latest subscriptions first) */
+                  $sort: {
+                    TMonth: 1
+                  }
+                },
+                {
+                  $limit: 100,
+                },
+                
+              ])
+            
 
 
 

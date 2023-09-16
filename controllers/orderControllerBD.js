@@ -297,7 +297,7 @@ module.exports.getOrderBDController = async (req, res) => {
     try {
         const token = req.headers["auth-token"];
         const decoded = jwt.verify(token, jwtSecret)
-        const allOrder = await Order2.find({})
+        const allOrder = await Order2.find({}).sort({TransactionDate: -1})
 
         if (!allOrder) {
             return res.status(401).send({ message: "Attention, nous sommes en rupture de order"})

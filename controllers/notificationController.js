@@ -159,3 +159,41 @@ module.exports.deleteNotificationController = async (req, res) => {
 
 
 }
+module.exports.addNotificationController = async (req, res) => {
+
+
+    try {
+        // const { error } = validateMaterial(req.body)
+        // if (error) {
+        //     return res.status(400).send({ message: error.details[0].message })
+        // }
+        const token = req.headers["auth-token"];
+        const decoded = jwt.verify(token, jwtSecret)
+        const site = req.body.site
+        
+        const newNotification = site === 'bacodjicoroni' ? await new Notification2(
+            {
+                Message: req.body.Message,
+                Quantity: req.body.Quantity,
+            }
+        ).save() : site === 'hypodrome' ? 
+
+        await new Notification3(
+            {
+                Message: req.body.Message,
+                Quantity: req.body.Quantity,
+            }
+        ).save() : await new Notification(
+            {
+                Message: req.body.Message,
+                Quantity: req.body.Quantity,
+            }
+        ).save()
+
+        res.status(200).send({message: "Les notification " + newNotification})
+
+    } catch (error) {
+        res.status(500).send({ message: "Internal server error " + error.message })
+    }
+
+}

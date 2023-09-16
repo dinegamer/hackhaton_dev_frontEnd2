@@ -1,7 +1,7 @@
 const router = require('express').Router()
-const {getHypodromeNotificationController, deleteHypodromeNotificationController} = require('../../controllers/notificationHypodromeController')
+const {getHypodromeNotificationController, deleteHypodromeNotificationController, addNotificationController} = require('../../controllers/notificationHypodromeController')
 router.get('/', getHypodromeNotificationController)
 router.delete('/', deleteHypodromeNotificationController)
-
+router.post('/', addNotificationController)
 
 module.exports = router

@@ -71,6 +71,32 @@ module.exports.getUserControllerById = async (req, res) => {
 
 
 }
+
+module.exports.updateUserRoleController = async (req, res) => {
+
+    try {
+        const userId = await req.body.userId
+        const userStatus = await req.body.userStatus
+        const filter = {_id: userId}
+        const update = {status: userStatus}
+        const anUser = await User.findOneAndUpdate(filter, update ).catch(err => console.log(err))
+
+        if (!anUser) {
+            return res.status(401).send({
+                message: "Aucun utilisateur quelconque n'existe  ",
+                
+            })
+        }
+        res.status(200).send(anUser)
+
+    } catch (error) {
+        res.status(500).send({ message: "Internal server error " +error })
+    }
+
+}
+
+
+
 module.exports.getSingleUserController = async (req, res) => {
 
     try {

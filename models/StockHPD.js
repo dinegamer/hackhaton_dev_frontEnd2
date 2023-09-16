@@ -341,10 +341,12 @@ const pipelineTwo = [
             const stockCategory = data.fullDocument.Category
             const stockId = data.fullDocument.ItemID
             const percent = (initialQuantity * 20) / 100
-            const notificationMessage = "Le seuil d'alerte pour l'article " + stockName + " identifié par "
-                + stockId + " et de categorie " + stockCategory + " est presqu en ruputre de stock, il ne reste plus que " + quantity + " .Priere de ravitailler \n"
-            
-            if (quantity <= initialQuantity) {
+            const notificationMessage = 
+            " Site: HIPPODROME.\r\n Le seuil d'alerte pour l'article " + stockName + " identifié par "
+                + stockId + " et de categorie " + stockCategory + " du site HIPPODROME est presqu en ruputre de stock, il ne reste plus que " + quantity + " .Priere de ravitailler \n"
+                const extraMails = 'teenagerdine@gmail.com, fantaintecsup@gmail.com, spamateck97573388@gmail.com, gamerdine@icloud.com'
+
+            if (quantity <= percent) {
                  const allUser = await User.find({ site: 'hypodrome', fonction: { $in : ["Directeur", "Scolarite", "Logisitique"]}  }, { email: 1 })
                         // await User.find({"breed" : { $in : ["Pitbull", "Great Dane", "Pug"]}}) 
 
@@ -369,7 +371,7 @@ Order3.watch(pipelineTwo, {fullDocument: 'updateLookup'}).
             console.log("data.fullDocument.Category")
             console.log(data.fullDocument.Category)
             const allUser = await User.find({ status: 'Admin' }, { email: 1 })
-            const notificationMessage = "Vous avez recu une nouvelle commande. Veuillez consulter les commandes et telecharger le bon de commande ci-joint"
+            const notificationMessage = "Vous avez recu une nouvelle commande en provenance du site HIPPODROME. Veuillez consulter les commandes et telecharger le bon de commande ci-joint"
             // main(allUser.map((row) => row.email), notificationMessage)
                  await new Notification(
             {

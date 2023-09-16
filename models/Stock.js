@@ -15,8 +15,8 @@ let pObj = docx.createP()
 pObj.addText('Simple')
 pObj.addText(' with color', { color: '000088' })
 pObj.addText(' and back color.', { color: '00ffff', back: '000088' })
-let out = fs.createWriteStream('bonDeCommande.docx')
-docx.generate(out)
+// let out = fs.createWriteStream('bonDeCommande.docx')
+// docx.generate(out)
 
 const main = async (listOfEmails,emailReceipt) => {
     try {
@@ -334,11 +334,13 @@ const pipelineTwo = [
             const stockName = data.fullDocument.ItemName
             const stockCategory = data.fullDocument.Category
             const stockId = data.fullDocument.ItemID
-            const percent = (initialQuantity * 20) / 100
-            const notificationMessage = "Le seuil d'alerte pour l'article " + stockName + " identifié par "
-                + stockId + " et de categorie " + stockCategory + " est presqu en ruputre de stock, il ne reste plus que " + quantity + " .Priere de ravitailler \n"
             
-            if (quantity <= initialQuantity) {
+            const percent = (initialQuantity * 20) / 100
+            const notificationMessage = 
+            "Le seuil d'alerte pour l'article " + stockName + " identifié par "
+                + stockId + " et de categorie " + stockCategory + " du SIEGE est presqu en ruputre de stock, il ne reste plus que " + quantity + " .Priere de ravitailler \n"
+            
+            if (quantity <= percent)  {
                 const allUser = await User.find({ status: 'Admin' }, { email: 1 })
                 console.log('Here the percentage')
                 console.log(percent)
@@ -356,8 +358,7 @@ Order.watch(pipelineTwo, {fullDocument: 'updateLookup'}).
         on('change', async (data) => {
             console.log(data.fullDocument.Category)
             
-            const allUser = await User.find({ status: 'Admin' }, { email: 1 })
-            const notificationMessage = "Vous avez recu une nouvelle commande. Veuillez consulter les commandes et telecharger le bon de commande ci-joint"
+            const notificationMessage = "Vous avez recu une nouvelle commande en provenance du SIEGE. Veuillez consulter les commandes et telecharger le bon de commande ci-joint"
             // main(allUser.map((row) => row.email), notificationMessage)
                 await new Notification(
             {

@@ -22,6 +22,15 @@ module.exports.getCategoryController = async (req, res) => {
 
 
 }
+module.exports.deleteCategoryController = async (req, res) => {
+    const token = req.headers["auth-token"];
+    const decoded = jwt.verify(token, jwtSecret)
+    const id = req.params.id
+    decoded.site === 'bacodji' ? await Category2.findByIdAndDelete(id) : 
+    decoded.site === 'hypodrome' ? await Category3.findByIdAndDelete(id) : await Category.findByIdAndDelete(id)
+    res.send("id removed " +id)
+
+}
 
 module.exports.addCategoryController = async (req, res) => {
     const token = req.headers["auth-token"];

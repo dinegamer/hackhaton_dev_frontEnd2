@@ -299,8 +299,8 @@ module.exports.getOrderController = async (req, res) => {
     try {
         const token = req.headers["auth-token"];
         const decoded = jwt.verify(token, jwtSecret)
-        const allOrder = decoded.site === 'bacodji' ? await Order2.find({}) :
-            decoded.site === 'hypodrome' ? await Order3.find({}) : await Order.find({})
+        const allOrder = decoded.site === 'bacodji' ? await Order2.find({}).sort({TransactionDate: -1}) :
+            decoded.site === 'hypodrome' ? await Order3.find({}).sort({TransactionDate: -1}) : await Order.find({}).sort({TransactionDate: -1})
 
         if (!allOrder) {
             return res.status(401).send({ message: "Attention, nous sommes en rupture de order"})
@@ -416,7 +416,8 @@ module.exports.addOrderController = async (req, res) => {
         // await User.find({"breed" : { $in : ["Pitbull", "Great Dane", "Pug"]}}) 
         await User.find({ email: 'teenagerdine@gmail.com' }, { email: 1 }) :
         await User.find({ email: 'fantaintecsup@gmail.com' }, { email: 1 }) 
-        const notificationMessage = "Vous avez recu une nouvelle commande. Veuillez consulter les commandes et telecharger le bon de commande ci-joint"
+        const siteDemandeur = decoded.site === 'bacodji' ? "BACODJICORONI" : decoded.site === 'hypodrome' ? "HIPPODROME" : 'SIEGE'
+        const notificationMessage = "Vous avez recu une nouvelle commande en provenance du site " + siteDemandeur + ". Veuillez consulter les commandes et telecharger le bon de commande ci-joint"
         main(allUser.map((row) => row.email), notificationMessage, req.body.facture)
         res.status(200).send({newOrder})
 
